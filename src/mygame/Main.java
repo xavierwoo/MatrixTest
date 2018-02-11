@@ -1,14 +1,12 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetManager;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
+
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
-import mygame.camera.CameraManager;
+import mygame.camera.CamManager;
+import mygame.grid.GridManager;
+import mygame.road.RoadManager;
 import mygame.vehicle.VehicleManager;
 
 /**
@@ -19,7 +17,9 @@ import mygame.vehicle.VehicleManager;
 public class Main extends SimpleApplication {
     
     VehicleManager vehicleManager;
-    CameraManager cameraManager;
+    CamManager camManager;
+    RoadManager roadManager;
+    GridManager gridManager;
     public static void main(String[] args) {
         Main app = new Main();
         app.start();
@@ -29,13 +29,16 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         
-        cameraManager = new CameraManager(cam, rootNode);
-        
+        gridManager = new GridManager(rootNode);
+        camManager = new CamManager(cam, rootNode);
         vehicleManager = new VehicleManager(assetManager, rootNode);
+        roadManager = new RoadManager(assetManager, gridManager);
         
         Spatial vehicle = vehicleManager.newVehicle();
         
         vehicleManager.setVehicleRoute(vehicle);
+        
+        roadManager.setTestRoads();
     }
 
     @Override

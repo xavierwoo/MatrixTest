@@ -15,16 +15,17 @@ import com.jme3.scene.control.CameraControl.ControlDirection;
  *
  * @author xinyun
  */
-public class CameraManager {
+public class CamManager {
     CameraNode cameraNode;
     Node cameraFocusNode = new Node("cameraFocusNode");
-    public CameraManager(Camera cam, Node rootNode){
+    
+    public CamManager(Camera cam, Node rootNode){
         cameraNode = new CameraNode("Camera Node", cam);
         cameraNode.setControlDir(ControlDirection.SpatialToCamera);
         rootNode.attachChild(cameraFocusNode);
-        cameraFocusNode.setLocalTranslation(new Vector3f(0,0,0));
+        cameraFocusNode.setLocalTranslation(new Vector3f(5,0,5));
         cameraFocusNode.attachChild(cameraNode);
-        cameraNode.setLocalTranslation(new Vector3f(10, 10, 10));
+        cameraNode.setLocalTranslation(new Vector3f(0, 10, 10));
         cameraNode.lookAt(cameraFocusNode.getLocalTranslation(), Vector3f.UNIT_Y);
     }
 }

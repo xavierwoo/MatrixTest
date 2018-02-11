@@ -12,14 +12,14 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
-import mygame.navigation.VehicleSteeringControl;
+import mygame.grid.VehicleSteeringControl;
 
 /**
  *
  * @author xinyun
  */
 public class VehicleManager {
-    Node vehicles = new Node();
+    Node vehicles = new Node("vehicles");
     AssetManager assetManager;
     
     public VehicleManager(AssetManager am, Node rootNode){
@@ -28,11 +28,14 @@ public class VehicleManager {
     }
     
     public Spatial newVehicle(){
-        Geometry vehicleGeom = new Geometry("Vehicle", new Box(2, 1, 4));
+        Geometry vehicleGeom = new Geometry("Vehicle", new Box(0.2f, 0.13f, 0.35f));
+        vehicleGeom.setLocalTranslation(0, 0.13f, 0f);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
         vehicleGeom.setMaterial(mat);
-        return vehicleGeom;
+        Node vehicleNode = new Node("Vehicle Node");
+        vehicleNode.attachChild(vehicleGeom);
+        return vehicleNode;
     }
     
     public void setVehicleRoute(Spatial vehicle){
