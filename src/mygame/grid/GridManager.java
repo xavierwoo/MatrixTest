@@ -13,14 +13,12 @@ import java.util.HashMap;
  * @author Xavier
  */
 public class GridManager {
-    HashMap<Position, Grid> allGrids = new HashMap<>();
+    final HashMap<Position, Grid> allGrids = new HashMap<>();
     
-    public Node rootNode;
-    public Node roads = new Node("Roads");
+    final public Node rootNode;
     
     public GridManager(final Node rootNode){
         this.rootNode = rootNode;
-        rootNode.attachChild(roads);
     }
     
     public boolean gridIsEmpty(Position pos){
@@ -32,14 +30,6 @@ public class GridManager {
             return false;
         }else{
             allGrids.put(grid.position, grid);
-            
-            switch (grid.spatial.getName()){
-                case "Lane":
-                    roads.attachChild(grid.spatial);
-                    break;
-                default:
-                    throw new Error("Not supported yet!");
-            }
             return true;
         }
     }

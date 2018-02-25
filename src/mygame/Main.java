@@ -36,7 +36,8 @@ public class Main extends SimpleApplication {
         
         Spatial vehicle = vehicleManager.newVehicle();
         
-        vehicleManager.setVehicleRoute(vehicle);
+        
+        vehicleManager.setVehicleRoute(vehicle, 4, vehicleManager.genTestRout());
         
         roadManager.setTestRoads();
     }

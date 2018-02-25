@@ -5,8 +5,6 @@
  */
 package mygame.grid;
 
-import mygame.grid.Position;
-import mygame.grid.Grid;
 import com.jme3.export.Savable;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -19,57 +17,59 @@ import java.util.ArrayList;
  * @author xinyun
  */
 public class VehicleSteeringControl extends AbstractControl implements Savable, Cloneable {
+
+    final private static float VELOCITY_TOLERANCE = 0.2f;
+    final private static float PARKING_VELOCITY = 0.5f;
+    final private float BRAKE_ACCELERATION = 4f;
+    final private ArrayList<NaviPath> naviPaths;
+    private int currPathIndex = 0;
+    private float t = 0;
+    private float velocity = 0;
+    final private float acceleration;
     
-    final ArrayList<NaviPath> naviPaths = new ArrayList<>();
-    int currPathIndex = 0;
-    float t = 0;
-    
-    public VehicleSteeringControl() {
+
+    public VehicleSteeringControl(float acceleration, ArrayList<NaviPath> paths) {
         super();
-        
-        
-        Vector3f[] wayPoints = new Vector3f[2];
-        wayPoints[0] = new Vector3f(1f, 0, 5);
-        wayPoints[1] = new Vector3f(1f, 0, 2f);
-        NaviPath naviPath = new NaviPath(new Grid(new Position(1, 5), null), new Grid(new Position(1, 2), null), wayPoints);
-        naviPaths.add(naviPath);
-        
-        wayPoints = new Vector3f[3];
-        wayPoints[0] = new Vector3f(1f, 0, 2);
-        wayPoints[1] = new Vector3f(1f, 0, 1f);
-        wayPoints[2] = new Vector3f(2f, 0, 1f);
-        naviPath = new NaviPath(new Grid(new Position(1, 2), null), new Grid(new Position(2, 1), null), wayPoints);
-        naviPaths.add(naviPath);
-        
-        
-        wayPoints = new Vector3f[2];
-        wayPoints[0] = new Vector3f(2, 0, 1);
-        wayPoints[1] = new Vector3f(5, 0, 1);
-        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints);
-        naviPaths.add(naviPath);
+        this.acceleration = acceleration;
+        naviPaths = paths;
     }
-    
+
     @Override
     protected void controlUpdate(float tpf) {
-        
+
         if (t < 1) {
             NaviPath currPath = naviPaths.get(currPathIndex);
             Vector3f pos = currPath.getPosition(t);
             Vector3f dir = currPath.getDirection(t);
-            
+
+            if (currPathIndex < naviPaths.size() - 1) {
+                if (velocity < currPath.maxSpeed - VELOCITY_TOLERANCE) {
+                    velocity += acceleration * tpf;
+                } else if (velocity > currPath.maxSpeed + VELOCITY_TOLERANCE) {
+                    velocity -= BRAKE_ACCELERATION * tpf;
+                }
+            }else{
+                if (velocity < PARKING_VELOCITY - VELOCITY_TOLERANCE) {
+                    velocity += acceleration * tpf;
+                }else if (velocity > PARKING_VELOCITY + VELOCITY_TOLERANCE){
+                    velocity -= BRAKE_ACCELERATION * tpf;
+                }
+            }
+
             spatial.setLocalTranslation(pos);
             spatial.lookAt(spatial.getLocalTranslation().add(dir), Vector3f.UNIT_Y);
+
+            t += velocity * tpf / currPath.length;
             
-            t += 0.005;
-        }else if(currPathIndex < naviPaths.size() - 1){
+        } else if (currPathIndex < naviPaths.size() - 1) {
             ++currPathIndex;
             t = 0;
         }
     }
-    
+
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
-        
+
     }
-    
+
 }

@@ -8,25 +8,15 @@ package mygame.grid;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
-import com.jme3.scene.Spatial;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  *
  * @author Xavier
  */
-public class Grid implements Savable{
-    public final Position position;
-    
-    public final Spatial spatial;
-    
-    public HashSet<NaviPath> edges = new HashSet<>();
-    
-    public Grid(Position position, Spatial spatial){
-        this.position = position;
-        this.spatial = spatial;
-    }
+public class GridContainer implements Savable{
+    public ArrayList<Grid> grids = new ArrayList<>();
 
     @Override
     public void write(JmeExporter ex) throws IOException {
@@ -37,5 +27,4 @@ public class Grid implements Savable{
     public void read(JmeImporter im) throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 }

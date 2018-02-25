@@ -5,7 +5,6 @@
  */
 package mygame.grid;
 
-import mygame.grid.Grid;
 import com.jme3.math.Vector3f;
 
 /**
@@ -17,11 +16,13 @@ public class NaviPath {
     final Grid source;
     final Grid target;
     final float length;
+    final float maxSpeed;
     
-    public NaviPath(Grid source, Grid target, Vector3f[] wayPoints){
+    public NaviPath(Grid source, Grid target, Vector3f[] wayPoints, float maxSpeed){
         this.source = source;
         this.target = target;
         this.p = wayPoints;
+        this.maxSpeed = maxSpeed;
         
         float chord = p[0].distance(p[p.length-1]);
         float conNet = 0;
