@@ -41,8 +41,8 @@ public class Main extends SimpleApplication {
         
         roadManager.setTestRoads();
         Spatial vehicle = vehicleManager.newVehicle();
-        Grid start = gridManager.allGrids.get(new Position(1, 1));
-        Grid goal = gridManager.allGrids.get(new Position(8, 1));
+        Grid start = gridManager.allGrids.get(new Position(5, 4));
+        Grid goal = gridManager.allGrids.get(new Position(6, 5));
         ArrayList<NaviPath> route = gridManager.AStar(start, goal);
         
         vehicleManager.setVehicleRoute(vehicle, 4, route);

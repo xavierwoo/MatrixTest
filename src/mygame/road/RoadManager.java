@@ -149,6 +149,25 @@ public class RoadManager {
             gridA1.edges.add(path1);
         }
         
+        //set end points naviPath
+        ArrayList<Grid> grids = ((GridContainer)roadSpatials[1].getUserData("GridContainer")).grids;
+        Vector3f[] wayPoints = new Vector3f[4];
+        wayPoints[0] = new Vector3f(grids.get(0).position.x, 0, grids.get(0).position.z);
+        wayPoints[1] = new Vector3f(grids.get(0).position.x - 1, 0, grids.get(0).position.z);
+        wayPoints[2] = new Vector3f(grids.get(1).position.x - 1, 0, grids.get(1).position.z);
+        wayPoints[3] = new Vector3f(grids.get(1).position.x, 0, grids.get(1).position.z);
+        NaviPath path = new NaviPath(grids.get(0), grids.get(1), wayPoints, 0.5f);
+        grids.get(0).edges.add(path);
+        
+        grids = ((GridContainer)roadSpatials[roadSpatials.length-2].getUserData("GridContainer")).grids;
+        wayPoints = new Vector3f[4];
+        wayPoints[0] = new Vector3f(grids.get(1).position.x, 0, grids.get(1).position.z);
+        wayPoints[1] = new Vector3f(grids.get(1).position.x + 1, 0, grids.get(1).position.z);
+        wayPoints[2] = new Vector3f(grids.get(0).position.x + 1, 0, grids.get(0).position.z);
+        wayPoints[3] = new Vector3f(grids.get(0).position.x, 0, grids.get(0).position.z);
+        path = new NaviPath(grids.get(1), grids.get(0), wayPoints, 0.5f);
+        grids.get(1).edges.add(path);
+        
         for (Spatial road : roadSpatials) {
             roadsNode.attachChild(road);
             GridContainer gridContainer = road.getUserData("GridContainer");
@@ -160,6 +179,6 @@ public class RoadManager {
     }
 
     public void setTestRoads() {
-        setTwoWayOneLaneRoadX(0, 10, 0);
+        setTwoWayOneLaneRoadX(0, 10, 4);
     }
 }
