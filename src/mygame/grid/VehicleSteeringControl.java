@@ -26,7 +26,6 @@ public class VehicleSteeringControl extends AbstractControl implements Savable, 
     private float t = 0;
     private float velocity = 0;
     final private float acceleration;
-    
 
     public VehicleSteeringControl(float acceleration, ArrayList<NaviPath> paths) {
         super();
@@ -36,22 +35,26 @@ public class VehicleSteeringControl extends AbstractControl implements Savable, 
 
     @Override
     protected void controlUpdate(float tpf) {
-
         if (t < 1) {
             NaviPath currPath = naviPaths.get(currPathIndex);
             Vector3f pos = currPath.getPosition(t);
             Vector3f dir = currPath.getDirection(t);
 
             if (currPathIndex < naviPaths.size() - 1) {
-                if (velocity < currPath.maxSpeed - VELOCITY_TOLERANCE) {
+                NaviPath nextPath = naviPaths.get(currPathIndex + 1);
+                if (velocity < currPath.maxSpeed - VELOCITY_TOLERANCE
+                        &&
+                        velocity < nextPath.maxSpeed - VELOCITY_TOLERANCE) {
                     velocity += acceleration * tpf;
-                } else if (velocity > currPath.maxSpeed + VELOCITY_TOLERANCE) {
+                } else if (velocity > currPath.maxSpeed + VELOCITY_TOLERANCE
+                        ||
+                        velocity > nextPath.maxSpeed + VELOCITY_TOLERANCE) {
                     velocity -= BRAKE_ACCELERATION * tpf;
                 }
-            }else{
+            } else {
                 if (velocity < PARKING_VELOCITY - VELOCITY_TOLERANCE) {
                     velocity += acceleration * tpf;
-                }else if (velocity > PARKING_VELOCITY + VELOCITY_TOLERANCE){
+                } else if (velocity > PARKING_VELOCITY + VELOCITY_TOLERANCE) {
                     velocity -= BRAKE_ACCELERATION * tpf;
                 }
             }
@@ -60,7 +63,7 @@ public class VehicleSteeringControl extends AbstractControl implements Savable, 
             spatial.lookAt(spatial.getLocalTranslation().add(dir), Vector3f.UNIT_Y);
 
             t += velocity * tpf / currPath.length;
-            
+
         } else if (currPathIndex < naviPaths.size() - 1) {
             ++currPathIndex;
             t = 0;
