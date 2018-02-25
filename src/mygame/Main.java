@@ -4,8 +4,12 @@ import com.jme3.app.SimpleApplication;
 
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
 import mygame.camera.CamManager;
+import mygame.grid.Grid;
 import mygame.grid.GridManager;
+import mygame.grid.NaviPath;
+import mygame.grid.Position;
 import mygame.road.RoadManager;
 import mygame.vehicle.VehicleManager;
 
@@ -34,12 +38,14 @@ public class Main extends SimpleApplication {
         vehicleManager = new VehicleManager(assetManager, rootNode);
         roadManager = new RoadManager(assetManager, gridManager);
         
-        Spatial vehicle = vehicleManager.newVehicle();
-        
-        
-        vehicleManager.setVehicleRoute(vehicle, 4, vehicleManager.genTestRout());
         
         roadManager.setTestRoads();
+        Spatial vehicle = vehicleManager.newVehicle();
+        Grid start = gridManager.allGrids.get(new Position(1, 1));
+        Grid goal = gridManager.allGrids.get(new Position(8, 1));
+        ArrayList<NaviPath> route = gridManager.AStar(start, goal);
+        
+        vehicleManager.setVehicleRoute(vehicle, 4, route);
     }
 
     @Override

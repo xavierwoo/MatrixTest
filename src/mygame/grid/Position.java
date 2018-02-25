@@ -21,6 +21,11 @@ public class Position {
     }
     
     @Override
+    public String toString(){
+        return "(" + x +", " + z + ")";
+    }
+    
+    @Override
     public boolean equals(Object o){
         if (o.getClass() != Position.class) {
             return false;

@@ -137,7 +137,7 @@ public class RoadManager {
             Grid gridB0 = gridsB.get(0);
             wayPoints0[0] = new Vector3f(gridB0.position.x, 0, gridB0.position.z);
             wayPoints0[1] = new Vector3f(gridA0.position.x, 0, gridA0.position.z);
-            NaviPath path0 = new NaviPath(gridB0, gridA0, wayPoints0, 4);
+            NaviPath path0 = new NaviPath(gridB0, gridA0, wayPoints0, 3);
             gridB0.edges.add(path0);
             
             Vector3f[] wayPoints1 = new Vector3f[2];
@@ -145,7 +145,7 @@ public class RoadManager {
             Grid gridB1 = gridsB.get(1);
             wayPoints1[0] = new Vector3f(gridA1.position.x, 0, gridA1.position.z);
             wayPoints1[1] = new Vector3f(gridB1.position.x, 0, gridB1.position.z);
-            NaviPath path1 = new NaviPath(gridA1, gridB1, wayPoints1, 4);
+            NaviPath path1 = new NaviPath(gridA1, gridB1, wayPoints1, 3);
             gridA1.edges.add(path1);
         }
         
@@ -160,6 +160,6 @@ public class RoadManager {
     }
 
     public void setTestRoads() {
-        setTwoWayOneLaneRoadX(0, 6, 0);
+        setTwoWayOneLaneRoadX(0, 10, 0);
     }
 }

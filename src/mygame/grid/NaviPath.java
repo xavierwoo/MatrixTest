@@ -6,6 +6,7 @@
 package mygame.grid;
 
 import com.jme3.math.Vector3f;
+import java.util.Objects;
 
 /**
  *
@@ -17,6 +18,7 @@ public class NaviPath {
     final Grid target;
     final float length;
     final float maxSpeed;
+    final float maxTime;
     
     public NaviPath(Grid source, Grid target, Vector3f[] wayPoints, float maxSpeed){
         this.source = source;
@@ -30,8 +32,40 @@ public class NaviPath {
             conNet += p[i].distance(p[i+1]);
         }
         length = (chord + conNet)/2;
+        maxTime = length / maxSpeed;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NaviPath other = (NaviPath) obj;
+        if (Float.floatToIntBits(this.length) != Float.floatToIntBits(other.length)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.maxSpeed) != Float.floatToIntBits(other.maxSpeed)) {
+            return false;
+        }
+        if (!Objects.equals(this.source, other.source)) {
+            return false;
+        }
+        if (!Objects.equals(this.target, other.target)) {
+            return false;
+        }
+        return true;
     }
     
+    @Override
+    public int hashCode(){
+        return Objects.hash(source, target);
+    }
     
     public Vector3f getDirection(float t){
         if (t < 0 || t > 1) {

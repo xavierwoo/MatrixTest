@@ -54,21 +54,33 @@ public class VehicleManager {
         ArrayList<NaviPath> naviPaths = new ArrayList<>();
         Vector3f[] wayPoints = new Vector3f[2];
         wayPoints[0] = new Vector3f(1f, 0, 5);
-        wayPoints[1] = new Vector3f(1f, 0, 2f);
-        NaviPath naviPath = new NaviPath(new Grid(new Position(1, 5), null), new Grid(new Position(1, 2), null), wayPoints, 4);
+        wayPoints[1] = new Vector3f(1f, 0, 3f);
+        NaviPath naviPath = new NaviPath(new Grid(new Position(1, 5), null), new Grid(new Position(1, 2), null), wayPoints, 3);
         naviPaths.add(naviPath);
 
+        wayPoints = new Vector3f[2];
+        wayPoints[0] = new Vector3f(1, 0, 3);
+        wayPoints[1] = new Vector3f(1, 0, 2);
+        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
+        naviPaths.add(naviPath);
+        
         wayPoints = new Vector3f[3];
         wayPoints[0] = new Vector3f(1f, 0, 2);
         wayPoints[1] = new Vector3f(1f, 0, 1f);
         wayPoints[2] = new Vector3f(2f, 0, 1f);
-        naviPath = new NaviPath(new Grid(new Position(1, 2), null), new Grid(new Position(2, 1), null), wayPoints, 4);
+        naviPath = new NaviPath(new Grid(new Position(1, 2), null), new Grid(new Position(2, 1), null), wayPoints, 1);
         naviPaths.add(naviPath);
 
         wayPoints = new Vector3f[2];
         wayPoints[0] = new Vector3f(2, 0, 1);
+        wayPoints[1] = new Vector3f(4, 0, 1);
+        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
+        naviPaths.add(naviPath);
+        
+        wayPoints = new Vector3f[2];
+        wayPoints[0] = new Vector3f(4, 0, 1);
         wayPoints[1] = new Vector3f(5, 0, 1);
-        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 4);
+        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
         naviPaths.add(naviPath);
         return naviPaths;
     }
