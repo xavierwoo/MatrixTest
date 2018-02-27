@@ -17,7 +17,6 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.shape.Box;
 import com.jme3.util.BufferUtils;
 import java.util.ArrayList;
 import mygame.grid.Grid;
@@ -43,7 +42,7 @@ public class RoadManager {
         gridManager = gm;
         genTwoLaneRoadMesh();
         gm.rootNode.attachChild(roadsNode);
-        setGridPoint();
+        //setGridPoint();
     }
 
     private void genTwoLaneRoadMesh() {
@@ -85,8 +84,8 @@ public class RoadManager {
         Grid grid0 = new Grid(new Position(x, z), road);
         Grid grid1;
         if (isZdir) {
-            road.setLocalRotation(new Quaternion().fromAngles(0, FastMath.PI / 2, 0));
-            grid1 = new Grid(new Position(x+1, z), road);
+            road.setLocalRotation(new Quaternion().fromAngles(0, -FastMath.PI / 2, 0));
+            grid1 = new Grid(new Position(x-1, z), road);
         } else {
             grid1 = new Grid(new Position(x, z+1), road);
         }
@@ -100,19 +99,19 @@ public class RoadManager {
         return road;
     }
 
-    private void setGridPoint() {
-        int num = 10;
-        for (int i = 0; i < num; i++) {
-            for (int j = 0; j < num; j++) {
-                Geometry zeroPoint = new Geometry("zero", new Box(0.1f, 0.1f, 0.1f));
-                Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-                mat.setColor("Color", ColorRGBA.Red);
-                zeroPoint.setMaterial(mat);
-                zeroPoint.setLocalTranslation(new Vector3f(i, 0, j));
-                roadsNode.attachChild(zeroPoint);
-            }
-        }
-    }
+//    private void setGridPoint() {
+//        int num = 10;
+//        for (int i = 0; i < num; i++) {
+//            for (int j = 0; j < num; j++) {
+//                Geometry zeroPoint = new Geometry("zero", new Box(0.1f, 0.1f, 0.1f));
+//                Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//                mat.setColor("Color", ColorRGBA.Red);
+//                zeroPoint.setMaterial(mat);
+//                zeroPoint.setLocalTranslation(new Vector3f(i, 0, j));
+//                roadsNode.attachChild(zeroPoint);
+//            }
+//        }
+//    }
     
     /***
      * Build a two way one lane road from (fromX, z) to (toX, z)
@@ -128,6 +127,39 @@ public class RoadManager {
         }
         
         //set navipaths
+        connectTwoWayOneLaneTiles(roadSpatials);
+        
+        //set end points naviPath
+        ArrayList<Grid> grids = ((GridContainer)roadSpatials[1].getUserData("GridContainer")).grids;
+        setUTurn(grids.get(0), grids.get(1), -1, 0);
+        grids = ((GridContainer)roadSpatials[roadSpatials.length-2].getUserData("GridContainer")).grids;
+        setUTurn(grids.get(1), grids.get(0), 1, 0);
+        
+        setGrids(roadSpatials);
+        return true;
+    }
+    
+    private void setUTurn(Grid fromGrid, Grid toGrid, int modiX, int modiZ){
+        Vector3f[] wayPoints = new Vector3f[4];
+        wayPoints[0] = new Vector3f(fromGrid.position.x, 0, fromGrid.position.z);
+        wayPoints[1] = new Vector3f(fromGrid.position.x + modiX, 0, fromGrid.position.z + modiZ);
+        wayPoints[2] = new Vector3f(toGrid.position.x + modiX, 0, toGrid.position.z + modiZ);
+        wayPoints[3] = new Vector3f(toGrid.position.x, 0, toGrid.position.z);
+        NaviPath path = new NaviPath(fromGrid, toGrid, wayPoints, 0.5f);
+        fromGrid.edges.add(path);
+    }
+
+    private void setGrids(Spatial[] spatials){
+        for (Spatial road : spatials) {
+            roadsNode.attachChild(road);
+            GridContainer gridContainer = road.getUserData("GridContainer");
+            for (Grid grid : gridContainer.grids){
+                gridManager.setGrid(grid);
+            }
+        }
+    }
+    
+    private void connectTwoWayOneLaneTiles(Spatial[] roadSpatials){
         for (int i=0; i<roadSpatials.length - 1; ++i){
             ArrayList<Grid> gridsA = ((GridContainer)roadSpatials[i].getUserData("GridContainer")).grids;
             ArrayList<Grid> gridsB = ((GridContainer)roadSpatials[i+1].getUserData("GridContainer")).grids;
@@ -148,37 +180,36 @@ public class RoadManager {
             NaviPath path1 = new NaviPath(gridA1, gridB1, wayPoints1, 3);
             gridA1.edges.add(path1);
         }
+    }
+    
+    /***
+     * Build a two way one lane road from (x, fromZ) to (x, toZ)
+     * @param x location
+     * @param fromZ location
+     * @param toZ location
+     * @return 
+     */
+    public boolean setTwoWayOneLaneRoadZ(int x, int fromZ, int toZ){
+        Spatial[] roadSpatials = new Spatial[toZ - fromZ + 1];
+        for (int z = fromZ; z <= toZ; ++z) {
+            roadSpatials[z - fromZ] = twoWayOneLaneRoad(x, z, true);
+        }
+        
+        //setnavipaths
+        connectTwoWayOneLaneTiles(roadSpatials);
         
         //set end points naviPath
         ArrayList<Grid> grids = ((GridContainer)roadSpatials[1].getUserData("GridContainer")).grids;
-        Vector3f[] wayPoints = new Vector3f[4];
-        wayPoints[0] = new Vector3f(grids.get(0).position.x, 0, grids.get(0).position.z);
-        wayPoints[1] = new Vector3f(grids.get(0).position.x - 1, 0, grids.get(0).position.z);
-        wayPoints[2] = new Vector3f(grids.get(1).position.x - 1, 0, grids.get(1).position.z);
-        wayPoints[3] = new Vector3f(grids.get(1).position.x, 0, grids.get(1).position.z);
-        NaviPath path = new NaviPath(grids.get(0), grids.get(1), wayPoints, 0.5f);
-        grids.get(0).edges.add(path);
-        
+        setUTurn(grids.get(0), grids.get(1), 0, -1);       
         grids = ((GridContainer)roadSpatials[roadSpatials.length-2].getUserData("GridContainer")).grids;
-        wayPoints = new Vector3f[4];
-        wayPoints[0] = new Vector3f(grids.get(1).position.x, 0, grids.get(1).position.z);
-        wayPoints[1] = new Vector3f(grids.get(1).position.x + 1, 0, grids.get(1).position.z);
-        wayPoints[2] = new Vector3f(grids.get(0).position.x + 1, 0, grids.get(0).position.z);
-        wayPoints[3] = new Vector3f(grids.get(0).position.x, 0, grids.get(0).position.z);
-        path = new NaviPath(grids.get(1), grids.get(0), wayPoints, 0.5f);
-        grids.get(1).edges.add(path);
-        
-        for (Spatial road : roadSpatials) {
-            roadsNode.attachChild(road);
-            GridContainer gridContainer = road.getUserData("GridContainer");
-            for (Grid grid : gridContainer.grids){
-                gridManager.setGrid(grid);
-            }
-        }
+        setUTurn(grids.get(1), grids.get(0), 0, 1);
+
+        setGrids(roadSpatials);
         return true;
     }
-
+    
     public void setTestRoads() {
-        setTwoWayOneLaneRoadX(0, 10, 4);
+        setTwoWayOneLaneRoadX(0, 10, 1);
+        setTwoWayOneLaneRoadZ(5, 3, 10);
     }
 }

@@ -38,14 +38,31 @@ public class Main extends SimpleApplication {
         vehicleManager = new VehicleManager(assetManager, rootNode);
         roadManager = new RoadManager(assetManager, gridManager);
         
-        
         roadManager.setTestRoads();
-        Spatial vehicle = vehicleManager.newVehicle();
-        Grid start = gridManager.allGrids.get(new Position(5, 4));
-        Grid goal = gridManager.allGrids.get(new Position(6, 5));
-        ArrayList<NaviPath> route = gridManager.AStar(start, goal);
         
-        vehicleManager.setVehicleRoute(vehicle, 4, route);
+        Spatial vehicle1 = vehicleManager.newVehicle();
+        Grid start = gridManager.allGrids.get(new Position(8, 1));
+        Grid goal = gridManager.allGrids.get(new Position(7, 2));
+        ArrayList<NaviPath> route = gridManager.AStar(start, goal);
+        vehicleManager.setVehicleRoute(vehicle1, 1, route);
+        
+        Spatial vehicle2 = vehicleManager.newVehicle();
+        start = gridManager.allGrids.get(new Position(7, 2));
+        goal = gridManager.allGrids.get(new Position(8, 1));
+        route = gridManager.AStar(start, goal);
+        vehicleManager.setVehicleRoute(vehicle2, 2, route);
+        
+        Spatial vehicle3 = vehicleManager.newVehicle();
+        start = gridManager.allGrids.get(new Position(4, 5));
+        goal = gridManager.allGrids.get(new Position(5, 4));
+        route = gridManager.AStar(start, goal);
+        vehicleManager.setVehicleRoute(vehicle3, 2, route);
+        
+        Spatial vehicle4 = vehicleManager.newVehicle();
+        start = gridManager.allGrids.get(new Position(5, 4));
+        goal = gridManager.allGrids.get(new Position(4, 5));
+        route = gridManager.AStar(start, goal);
+        vehicleManager.setVehicleRoute(vehicle4, 3, route);
     }
 
     @Override
