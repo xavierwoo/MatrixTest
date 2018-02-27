@@ -66,12 +66,14 @@ public class RoadManager {
 
     }
 
-    /***
+    /**
+     * *
      * Create a two way one lane road tile
+     *
      * @param x location
      * @param z location
      * @param isZdir if the road is facing to z direction
-     * @return 
+     * @return
      */
     private Spatial twoWayOneLaneRoad(int x, int z, boolean isZdir) {
         Spatial road = new Geometry("twoWayOneLaneRoad", twoLaneRoadMesh);
@@ -85,17 +87,17 @@ public class RoadManager {
         Grid grid1;
         if (isZdir) {
             road.setLocalRotation(new Quaternion().fromAngles(0, -FastMath.PI / 2, 0));
-            grid1 = new Grid(new Position(x-1, z), road);
+            grid1 = new Grid(new Position(x - 1, z), road);
         } else {
-            grid1 = new Grid(new Position(x, z+1), road);
+            grid1 = new Grid(new Position(x, z + 1), road);
         }
 
         GridContainer gridContainer = new GridContainer();
         gridContainer.grids.add(grid0);
         gridContainer.grids.add(grid1);
-        
+
         road.setUserData("GridContainer", gridContainer);
-        
+
         return road;
     }
 
@@ -112,34 +114,35 @@ public class RoadManager {
 //            }
 //        }
 //    }
-    
-    /***
+    /**
+     * *
      * Build a two way one lane road from (fromX, z) to (toX, z)
+     *
      * @param fromX location
      * @param toX location
      * @param z location
-     * @return 
+     * @return
      */
-    public boolean setTwoWayOneLaneRoadX(int fromX, int toX, int z){
+    public boolean setTwoWayOneLaneRoadX(int fromX, int toX, int z) {
         Spatial[] roadSpatials = new Spatial[toX - fromX + 1];
-        for(int x=fromX; x<=toX; ++x){
+        for (int x = fromX; x <= toX; ++x) {
             roadSpatials[x - fromX] = twoWayOneLaneRoad(x, z, false);
         }
-        
+
         //set navipaths
         connectTwoWayOneLaneTiles(roadSpatials);
-        
+
         //set end points naviPath
-        ArrayList<Grid> grids = ((GridContainer)roadSpatials[1].getUserData("GridContainer")).grids;
+        ArrayList<Grid> grids = ((GridContainer) roadSpatials[1].getUserData("GridContainer")).grids;
         setUTurn(grids.get(0), grids.get(1), -1, 0);
-        grids = ((GridContainer)roadSpatials[roadSpatials.length-2].getUserData("GridContainer")).grids;
+        grids = ((GridContainer) roadSpatials[roadSpatials.length - 2].getUserData("GridContainer")).grids;
         setUTurn(grids.get(1), grids.get(0), 1, 0);
-        
+
         setGrids(roadSpatials);
         return true;
     }
-    
-    private void setUTurn(Grid fromGrid, Grid toGrid, int modiX, int modiZ){
+
+    private void setUTurn(Grid fromGrid, Grid toGrid, int modiX, int modiZ) {
         Vector3f[] wayPoints = new Vector3f[4];
         wayPoints[0] = new Vector3f(fromGrid.position.x, 0, fromGrid.position.z);
         wayPoints[1] = new Vector3f(fromGrid.position.x + modiX, 0, fromGrid.position.z + modiZ);
@@ -149,21 +152,21 @@ public class RoadManager {
         fromGrid.edges.add(path);
     }
 
-    private void setGrids(Spatial[] spatials){
+    private void setGrids(Spatial[] spatials) {
         for (Spatial road : spatials) {
             roadsNode.attachChild(road);
             GridContainer gridContainer = road.getUserData("GridContainer");
-            for (Grid grid : gridContainer.grids){
+            for (Grid grid : gridContainer.grids) {
                 gridManager.setGrid(grid);
             }
         }
     }
-    
-    private void connectTwoWayOneLaneTiles(Spatial[] roadSpatials){
-        for (int i=0; i<roadSpatials.length - 1; ++i){
-            ArrayList<Grid> gridsA = ((GridContainer)roadSpatials[i].getUserData("GridContainer")).grids;
-            ArrayList<Grid> gridsB = ((GridContainer)roadSpatials[i+1].getUserData("GridContainer")).grids;
-            
+
+    private void connectTwoWayOneLaneTiles(Spatial[] roadSpatials) {
+        for (int i = 0; i < roadSpatials.length - 1; ++i) {
+            ArrayList<Grid> gridsA = ((GridContainer) roadSpatials[i].getUserData("GridContainer")).grids;
+            ArrayList<Grid> gridsB = ((GridContainer) roadSpatials[i + 1].getUserData("GridContainer")).grids;
+
             Vector3f[] wayPoints0 = new Vector3f[2];
             Grid gridA0 = gridsA.get(0);
             Grid gridB0 = gridsB.get(0);
@@ -171,7 +174,7 @@ public class RoadManager {
             wayPoints0[1] = new Vector3f(gridA0.position.x, 0, gridA0.position.z);
             NaviPath path0 = new NaviPath(gridB0, gridA0, wayPoints0, 3);
             gridB0.edges.add(path0);
-            
+
             Vector3f[] wayPoints1 = new Vector3f[2];
             Grid gridA1 = gridsA.get(1);
             Grid gridB1 = gridsB.get(1);
@@ -181,33 +184,35 @@ public class RoadManager {
             gridA1.edges.add(path1);
         }
     }
-    
-    /***
+
+    /**
+     * *
      * Build a two way one lane road from (x, fromZ) to (x, toZ)
+     *
      * @param x location
      * @param fromZ location
      * @param toZ location
-     * @return 
+     * @return
      */
-    public boolean setTwoWayOneLaneRoadZ(int x, int fromZ, int toZ){
+    public boolean setTwoWayOneLaneRoadZ(int x, int fromZ, int toZ) {
         Spatial[] roadSpatials = new Spatial[toZ - fromZ + 1];
         for (int z = fromZ; z <= toZ; ++z) {
             roadSpatials[z - fromZ] = twoWayOneLaneRoad(x, z, true);
         }
-        
+
         //setnavipaths
         connectTwoWayOneLaneTiles(roadSpatials);
-        
+
         //set end points naviPath
-        ArrayList<Grid> grids = ((GridContainer)roadSpatials[1].getUserData("GridContainer")).grids;
-        setUTurn(grids.get(0), grids.get(1), 0, -1);       
-        grids = ((GridContainer)roadSpatials[roadSpatials.length-2].getUserData("GridContainer")).grids;
+        ArrayList<Grid> grids = ((GridContainer) roadSpatials[1].getUserData("GridContainer")).grids;
+        setUTurn(grids.get(0), grids.get(1), 0, -1);
+        grids = ((GridContainer) roadSpatials[roadSpatials.length - 2].getUserData("GridContainer")).grids;
         setUTurn(grids.get(1), grids.get(0), 0, 1);
 
         setGrids(roadSpatials);
         return true;
     }
-    
+
     public void setTestRoads() {
         setTwoWayOneLaneRoadX(0, 10, 1);
         setTwoWayOneLaneRoadZ(5, 3, 10);
