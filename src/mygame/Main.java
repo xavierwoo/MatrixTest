@@ -38,7 +38,11 @@ public class Main extends SimpleApplication {
         vehicleManager = new VehicleManager(assetManager, rootNode);
         roadManager = new RoadManager(assetManager, gridManager);
         
-        roadManager.setTestRoads();
+        roadManager.setTwoWayOneLaneRoad(0, 1, 10, 1);
+        
+        roadManager.setTwoWayOneLaneRoad(5, 3, 5, 10);
+        
+        System.out.println(roadManager.checkTwoWayOneLaneRoadZAvailability(3, 3, 5));
         
         Spatial vehicle1 = vehicleManager.newVehicle();
         Grid start = gridManager.allGrids.get(new Position(8, 1));

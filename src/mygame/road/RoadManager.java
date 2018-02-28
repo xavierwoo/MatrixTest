@@ -101,19 +101,56 @@ public class RoadManager {
         return road;
     }
 
-//    private void setGridPoint() {
-//        int num = 10;
-//        for (int i = 0; i < num; i++) {
-//            for (int j = 0; j < num; j++) {
-//                Geometry zeroPoint = new Geometry("zero", new Box(0.1f, 0.1f, 0.1f));
-//                Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-//                mat.setColor("Color", ColorRGBA.Red);
-//                zeroPoint.setMaterial(mat);
-//                zeroPoint.setLocalTranslation(new Vector3f(i, 0, j));
-//                roadsNode.attachChild(zeroPoint);
-//            }
-//        }
-//    }
+    /**
+     * *
+     * Build a two way one lane road from (fromX, fromZ) to (toX, toZ)
+     *
+     * @param fromX
+     * @param fromZ
+     * @param toX
+     * @param toZ
+     * @return
+     */
+    public boolean setTwoWayOneLaneRoad(int fromX, int fromZ, int toX, int toZ) {
+
+        if (fromX == toX) {
+            if (!checkTwoWayOneLaneRoadZAvailability(fromX, fromZ, toZ)) {
+                return false;
+            }
+            setTwoWayOneLaneRoadZ(fromX, fromZ, toZ);
+            return true;
+        } else if (fromZ == toZ) {
+            if (!checkTwoWayOneLaneRoadXAvailability(fromX, toX, fromZ)) {
+                return false;
+            }
+            setTwoWayOneLaneRoadX(fromX, toX, fromZ);
+            return true;
+        } else {
+            System.err.println("setTwoWayOneLaneRoad not supported");
+            return false;
+        }
+    }
+
+    public boolean checkTwoWayOneLaneRoadZAvailability(int x, int fromZ, int toZ) {
+        for (int z = fromZ; z <= toZ; ++z) {
+            if (gridManager.allGrids.containsKey(new Position(x, z))
+                    || gridManager.allGrids.containsKey(new Position(x - 1, z))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean checkTwoWayOneLaneRoadXAvailability(int fromX, int toX, int z) {
+        for (int x = fromX; x <= toX; ++x) {
+            if (gridManager.allGrids.containsKey(new Position(x, z))
+                    || gridManager.allGrids.containsKey(new Position(x, z + 1))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * *
      * Build a two way one lane road from (fromX, z) to (toX, z)
@@ -121,9 +158,8 @@ public class RoadManager {
      * @param fromX location
      * @param toX location
      * @param z location
-     * @return
      */
-    public boolean setTwoWayOneLaneRoadX(int fromX, int toX, int z) {
+    private void setTwoWayOneLaneRoadX(int fromX, int toX, int z) {
         Spatial[] roadSpatials = new Spatial[toX - fromX + 1];
         for (int x = fromX; x <= toX; ++x) {
             roadSpatials[x - fromX] = twoWayOneLaneRoad(x, z, false);
@@ -139,7 +175,6 @@ public class RoadManager {
         setUTurn(grids.get(1), grids.get(0), 1, 0);
 
         setGrids(roadSpatials);
-        return true;
     }
 
     private void setUTurn(Grid fromGrid, Grid toGrid, int modiX, int modiZ) {
@@ -192,9 +227,8 @@ public class RoadManager {
      * @param x location
      * @param fromZ location
      * @param toZ location
-     * @return
      */
-    public boolean setTwoWayOneLaneRoadZ(int x, int fromZ, int toZ) {
+    private void setTwoWayOneLaneRoadZ(int x, int fromZ, int toZ) {
         Spatial[] roadSpatials = new Spatial[toZ - fromZ + 1];
         for (int z = fromZ; z <= toZ; ++z) {
             roadSpatials[z - fromZ] = twoWayOneLaneRoad(x, z, true);
@@ -210,11 +244,5 @@ public class RoadManager {
         setUTurn(grids.get(1), grids.get(0), 0, 1);
 
         setGrids(roadSpatials);
-        return true;
-    }
-
-    public void setTestRoads() {
-        setTwoWayOneLaneRoadX(0, 10, 1);
-        setTwoWayOneLaneRoadZ(5, 3, 10);
     }
 }
