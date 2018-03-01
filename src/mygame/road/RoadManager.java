@@ -31,16 +31,20 @@ import mygame.grid.Position;
  */
 public class RoadManager {
 
+    final private float U_TURN_MAX_VELOCITY = 1f;
+    final private float TWO_WAY_ONE_LANE_ROAD_MAX_VELOCITY = 2f;
     Node roadsNode = new Node("roads");
     AssetManager assetManager;
     GridManager gridManager;
 
     private Mesh twoLaneRoadMesh;
+    private Mesh twoLaneCrossMesh;
 
     public RoadManager(final AssetManager am, final GridManager gm) {
         assetManager = am;
         gridManager = gm;
         genTwoLaneRoadMesh();
+        genTwoLaneCrossMesh();
         gm.rootNode.attachChild(roadsNode);
         //setGridPoint();
     }
@@ -63,7 +67,26 @@ public class RoadManager {
         twoLaneRoadMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
         twoLaneRoadMesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
         twoLaneRoadMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(indexes));
+    }
 
+    private void genTwoLaneCrossMesh() {
+        twoLaneCrossMesh = new Mesh();
+        Vector3f[] vertices = new Vector3f[4];
+        vertices[0] = new Vector3f(-0.5f, 0, -0.5f);
+        vertices[1] = new Vector3f(-0.5f, 0, 1.5f);
+        vertices[2] = new Vector3f(1.5f, 0, 1.5f);
+        vertices[3] = new Vector3f(1.5f, 0, -0.5f);
+
+        Vector2f[] texCoord = new Vector2f[4];
+        texCoord[0] = new Vector2f(0, 0);
+        texCoord[1] = new Vector2f(0, 1);
+        texCoord[2] = new Vector2f(1, 1);
+        texCoord[3] = new Vector2f(1, 0);
+
+        int[] indexes = {0, 1, 2, 0, 2, 3};
+        twoLaneRoadMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
+        twoLaneRoadMesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
+        twoLaneRoadMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(indexes));
     }
 
     /**
@@ -88,17 +111,43 @@ public class RoadManager {
         if (isZdir) {
             road.setLocalRotation(new Quaternion().fromAngles(0, -FastMath.PI / 2, 0));
             grid1 = new Grid(new Position(x - 1, z), road);
+            setUTurn(grid0, grid1, 0, -1);
+            setUTurn(grid1, grid0, 0, 1);
         } else {
             grid1 = new Grid(new Position(x, z + 1), road);
+            setUTurn(grid0, grid1, -1, 0);
+            setUTurn(grid1, grid0, 1, 0);
         }
 
-        GridContainer gridContainer = new GridContainer();
+        GridContainer gridContainer = new GridContainer(2);
         gridContainer.grids.add(grid0);
         gridContainer.grids.add(grid1);
 
         road.setUserData("GridContainer", gridContainer);
 
         return road;
+    }
+    
+    private Spatial twoLaneCross(int x, int z){
+        Spatial cross = new Geometry("twoLaneCross", twoLaneCrossMesh);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", ColorRGBA.Green);
+        cross.setMaterial(mat);
+        cross.setLocalTranslation(x, 0, z);
+        
+        Grid grid0 = new Grid(new Position(x, z), cross);
+        Grid grid1 = new Grid(new Position(x+1, z), cross);
+        Grid grid2 = new Grid(new Position(x, z+1), cross);
+        Grid grid3 = new Grid(new Position(x+1, z+1), cross);
+        //TODO: connect grids
+        GridContainer gridContainer = new GridContainer(4);
+        gridContainer.grids.add(grid0);
+        gridContainer.grids.add(grid1);
+        gridContainer.grids.add(grid2);
+        gridContainer.grids.add(grid3);
+        
+        cross.setUserData("GridContainer", gridContainer);
+        return cross;
     }
 
     /**
@@ -168,11 +217,23 @@ public class RoadManager {
         //set navipaths
         connectTwoWayOneLaneTiles(roadSpatials);
 
-        //set end points naviPath
-        ArrayList<Grid> grids = ((GridContainer) roadSpatials[1].getUserData("GridContainer")).grids;
-        setUTurn(grids.get(0), grids.get(1), -1, 0);
-        grids = ((GridContainer) roadSpatials[roadSpatials.length - 2].getUserData("GridContainer")).grids;
-        setUTurn(grids.get(1), grids.get(0), 1, 0);
+        //connect adjacent roads
+        Grid xpGrid0 = gridManager.allGrids.get(new Position(toX + 1, z));
+        Grid xpGrid1 = gridManager.allGrids.get(new Position(toX + 1, z + 1));
+        if (xpGrid0 != null && xpGrid1 != null) {
+            if (xpGrid0.spatial == xpGrid1.spatial
+                    && xpGrid0.spatial.getName().equals("twoWayOneLaneRoad")) {
+                connectTwoWayOneLaneTiles(roadSpatials[roadSpatials.length - 1], xpGrid0.spatial);
+            }
+        }
+        Grid xnGrid0 = gridManager.allGrids.get(new Position(fromX - 1, z));
+        Grid xnGrid1 = gridManager.allGrids.get(new Position(fromX - 1, z + 1));
+        if (xnGrid0 != null && xnGrid1 != null) {
+            if (xnGrid0.spatial == xnGrid1.spatial
+                    && xnGrid0.spatial.getName().equals("twoWayOneLaneRoad")) {
+                connectTwoWayOneLaneTiles(xnGrid0.spatial, roadSpatials[0]);
+            }
+        }
 
         setGrids(roadSpatials);
     }
@@ -183,7 +244,7 @@ public class RoadManager {
         wayPoints[1] = new Vector3f(fromGrid.position.x + modiX, 0, fromGrid.position.z + modiZ);
         wayPoints[2] = new Vector3f(toGrid.position.x + modiX, 0, toGrid.position.z + modiZ);
         wayPoints[3] = new Vector3f(toGrid.position.x, 0, toGrid.position.z);
-        NaviPath path = new NaviPath(fromGrid, toGrid, wayPoints, 0.5f);
+        NaviPath path = new NaviPath(fromGrid, toGrid, wayPoints, U_TURN_MAX_VELOCITY);
         fromGrid.edges.add(path);
     }
 
@@ -199,27 +260,26 @@ public class RoadManager {
 
     private void connectTwoWayOneLaneTiles(Spatial[] roadSpatials) {
         for (int i = 0; i < roadSpatials.length - 1; ++i) {
-            ArrayList<Grid> gridsA = ((GridContainer) roadSpatials[i].getUserData("GridContainer")).grids;
-            ArrayList<Grid> gridsB = ((GridContainer) roadSpatials[i + 1].getUserData("GridContainer")).grids;
-
-            Vector3f[] wayPoints0 = new Vector3f[2];
-            Grid gridA0 = gridsA.get(0);
-            Grid gridB0 = gridsB.get(0);
-            wayPoints0[0] = new Vector3f(gridB0.position.x, 0, gridB0.position.z);
-            wayPoints0[1] = new Vector3f(gridA0.position.x, 0, gridA0.position.z);
-            NaviPath path0 = new NaviPath(gridB0, gridA0, wayPoints0, 3);
-            gridB0.edges.add(path0);
-
-            Vector3f[] wayPoints1 = new Vector3f[2];
-            Grid gridA1 = gridsA.get(1);
-            Grid gridB1 = gridsB.get(1);
-            wayPoints1[0] = new Vector3f(gridA1.position.x, 0, gridA1.position.z);
-            wayPoints1[1] = new Vector3f(gridB1.position.x, 0, gridB1.position.z);
-            NaviPath path1 = new NaviPath(gridA1, gridB1, wayPoints1, 3);
-            gridA1.edges.add(path1);
+            connectTwoWayOneLaneTiles(roadSpatials[i], roadSpatials[i + 1]);
         }
     }
 
+    private void connectTwoWayOneLaneTiles(Spatial roadSpatial1, Spatial roadSpatial2) {
+        ArrayList<Grid> gridsA = ((GridContainer) roadSpatial1.getUserData("GridContainer")).grids;
+        ArrayList<Grid> gridsB = ((GridContainer) roadSpatial2.getUserData("GridContainer")).grids;
+
+        conGridsDirectly(gridsB.get(0), gridsA.get(0), TWO_WAY_ONE_LANE_ROAD_MAX_VELOCITY);
+        conGridsDirectly(gridsA.get(1), gridsB.get(1), TWO_WAY_ONE_LANE_ROAD_MAX_VELOCITY);
+    }
+
+    private void conGridsDirectly(Grid gridA, Grid gridB, float maxVelocity){
+        Vector3f[] wayPoints = new Vector3f[2];
+        wayPoints[0] = new Vector3f(gridA.position.x, 0, gridA.position.z);
+        wayPoints[1] = new Vector3f(gridB.position.x, 0, gridB.position.z);
+        NaviPath path = new NaviPath(gridA, gridB, wayPoints, maxVelocity);
+        gridA.edges.add(path);
+    }
+    
     /**
      * *
      * Build a two way one lane road from (x, fromZ) to (x, toZ)
@@ -237,11 +297,23 @@ public class RoadManager {
         //setnavipaths
         connectTwoWayOneLaneTiles(roadSpatials);
 
-        //set end points naviPath
-        ArrayList<Grid> grids = ((GridContainer) roadSpatials[1].getUserData("GridContainer")).grids;
-        setUTurn(grids.get(0), grids.get(1), 0, -1);
-        grids = ((GridContainer) roadSpatials[roadSpatials.length - 2].getUserData("GridContainer")).grids;
-        setUTurn(grids.get(1), grids.get(0), 0, 1);
+        //connect adjacent roads
+        Grid zpGrid0 = gridManager.allGrids.get(new Position(x, toZ + 1));
+        Grid zpGrid1 = gridManager.allGrids.get(new Position(x - 1, toZ + 1));
+        if (zpGrid0 != null && zpGrid1 != null) {
+            if (zpGrid0.spatial == zpGrid1.spatial
+                    && zpGrid0.spatial.getName().equals("twoWayOneLaneRoad")) {
+                connectTwoWayOneLaneTiles(roadSpatials[roadSpatials.length - 1], zpGrid0.spatial);
+            }
+        }
+        Grid znGrid0 = gridManager.allGrids.get(new Position(x, fromZ - 1));
+        Grid znGrid1 = gridManager.allGrids.get(new Position(x - 1, fromZ - 1));
+        if (znGrid0 != null && znGrid1 != null) {
+            if (znGrid0.spatial == znGrid1.spatial
+                    && znGrid0.spatial.getName().equals("twoWayOneLaneRoad")) {
+                connectTwoWayOneLaneTiles(znGrid0.spatial, roadSpatials[0]);
+            }
+        }
 
         setGrids(roadSpatials);
     }

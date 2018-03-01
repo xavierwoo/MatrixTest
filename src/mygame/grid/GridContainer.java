@@ -16,8 +16,11 @@ import java.util.ArrayList;
  * @author Xavier
  */
 public class GridContainer implements Savable{
-    public ArrayList<Grid> grids = new ArrayList<>();
+    public ArrayList<Grid> grids;
 
+    public GridContainer(int size){
+        grids = new ArrayList<>(size);
+    }
     @Override
     public void write(JmeExporter ex) throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

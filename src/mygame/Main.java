@@ -38,33 +38,35 @@ public class Main extends SimpleApplication {
         vehicleManager = new VehicleManager(assetManager, rootNode);
         roadManager = new RoadManager(assetManager, gridManager);
         
-        roadManager.setTwoWayOneLaneRoad(0, 1, 10, 1);
+        roadManager.setTwoWayOneLaneRoad(6, 1, 10, 1);
+        roadManager.setTwoWayOneLaneRoad(0, 1, 5, 1);
         
-        roadManager.setTwoWayOneLaneRoad(5, 3, 5, 10);
         
-        System.out.println(roadManager.checkTwoWayOneLaneRoadZAvailability(3, 3, 5));
+        roadManager.setTwoWayOneLaneRoad(5, 3, 5, 5);
+        roadManager.setTwoWayOneLaneRoad(5, 6, 5, 7);
+        
         
         Spatial vehicle1 = vehicleManager.newVehicle();
         Grid start = gridManager.allGrids.get(new Position(8, 1));
-        Grid goal = gridManager.allGrids.get(new Position(7, 2));
+        Grid goal = gridManager.allGrids.get(new Position(4, 2));
         ArrayList<NaviPath> route = gridManager.AStar(start, goal);
         vehicleManager.setVehicleRoute(vehicle1, 1, route);
         
         Spatial vehicle2 = vehicleManager.newVehicle();
-        start = gridManager.allGrids.get(new Position(7, 2));
+        start = gridManager.allGrids.get(new Position(4, 2));
         goal = gridManager.allGrids.get(new Position(8, 1));
         route = gridManager.AStar(start, goal);
         vehicleManager.setVehicleRoute(vehicle2, 2, route);
         
         Spatial vehicle3 = vehicleManager.newVehicle();
-        start = gridManager.allGrids.get(new Position(4, 5));
-        goal = gridManager.allGrids.get(new Position(5, 4));
+        start = gridManager.allGrids.get(new Position(4, 4));
+        goal = gridManager.allGrids.get(new Position(5, 7));
         route = gridManager.AStar(start, goal);
         vehicleManager.setVehicleRoute(vehicle3, 2, route);
         
         Spatial vehicle4 = vehicleManager.newVehicle();
-        start = gridManager.allGrids.get(new Position(5, 4));
-        goal = gridManager.allGrids.get(new Position(4, 5));
+        start = gridManager.allGrids.get(new Position(5, 7));
+        goal = gridManager.allGrids.get(new Position(4, 4));
         route = gridManager.AStar(start, goal);
         vehicleManager.setVehicleRoute(vehicle4, 3, route);
     }
