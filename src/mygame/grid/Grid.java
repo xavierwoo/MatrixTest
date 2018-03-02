@@ -10,6 +10,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -22,7 +23,8 @@ public class Grid implements Savable{
     
     public final Spatial spatial;
     
-    public HashSet<NaviPath> edges = new HashSet<>();
+    public HashMap<Grid, NaviPath> edges = new HashMap<>();
+    public HashSet<Grid> toThis = new HashSet<>();
     
     public Grid(Position position, Spatial spatial){
         this.position = position;

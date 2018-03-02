@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  *
@@ -31,6 +32,7 @@ public class GridManager {
     
     public boolean setGrid(Grid grid){
         if (allGrids.containsKey(grid.position)) {
+            System.err.println("The grid is already occupied");
             return false;
         }else{
             allGrids.put(grid.position, grid);
@@ -57,8 +59,9 @@ public class GridManager {
             openSet.remove(current);
             closedSet.add(current);
             
-            for (NaviPath naviPath : current.edges){
-                Grid neighbour = naviPath.target;
+            for(Map.Entry<Grid, NaviPath> entry : current.edges.entrySet()){
+                Grid neighbour = entry.getKey();
+                NaviPath naviPath = entry.getValue();
                 if (closedSet.contains(neighbour)) {
                     continue;
                 }

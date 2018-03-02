@@ -9,17 +9,16 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  *
  * @author Xavier
  */
 public class GridContainer implements Savable{
-    public ArrayList<Grid> grids;
+    public Grid[] grids;
 
     public GridContainer(int size){
-        grids = new ArrayList<>(size);
+        grids = new Grid[size];
     }
     @Override
     public void write(JmeExporter ex) throws IOException {

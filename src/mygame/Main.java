@@ -43,39 +43,46 @@ public class Main extends SimpleApplication {
         vehicleManager = new VehicleManager(assetManager, rootNode);
         roadManager = new RoadManager(assetManager, gridManager);
 
-        roadManager.setTwoWayOneLaneRoad(6, 1, 10, 1);
-        roadManager.setTwoWayOneLaneRoad(0, 1, 5, 1);
+        roadManager.setTwoWayOneLaneRoad(1, 1, 10, 1);
 
-        roadManager.setTwoWayOneLaneRoad(5, 3, 5, 5);
-        roadManager.setTwoWayOneLaneRoad(5, 6, 5, 7);
+        roadManager.setTwoWayOneLaneRoad(5, 3, 5, 9);
 
-        GlobalVariables.gSpeed = 0;
-
-        Spatial vehicle1 = vehicleManager.newVehicle();
-        Grid start = gridManager.allGrids.get(new Position(8, 1));
-        Grid goal = gridManager.allGrids.get(new Position(4, 2));
-        ArrayList<NaviPath> route = gridManager.AStar(start, goal);
-        vehicleManager.setVehicleRoute(vehicle1, 1, route);
-
-        Spatial vehicle2 = vehicleManager.newVehicle();
-        start = gridManager.allGrids.get(new Position(4, 2));
-        goal = gridManager.allGrids.get(new Position(8, 1));
-        route = gridManager.AStar(start, goal);
-        vehicleManager.setVehicleRoute(vehicle2, 2, route);
+        //GlobalVariables.gSpeed = 0;
+        Grid start;
+        Grid goal;
+        ArrayList<NaviPath> route;
+//        Spatial vehicle1 = vehicleManager.newVehicle();
+//        start = gridManager.allGrids.get(new Position(8, 1));
+//        goal = gridManager.allGrids.get(new Position(4, 2));
+//        route = gridManager.AStar(start, goal);
+//        if (route != null) {
+//            vehicleManager.setVehicleRoute(vehicle1, 1, route);
+//        }
+//
+//        Spatial vehicle2 = vehicleManager.newVehicle();
+//        start = gridManager.allGrids.get(new Position(4, 2));
+//        goal = gridManager.allGrids.get(new Position(8, 1));
+//        route = gridManager.AStar(start, goal);
+//        if (route != null) {
+//            vehicleManager.setVehicleRoute(vehicle2, 2, route);
+//        }
 
         Spatial vehicle3 = vehicleManager.newVehicle();
         start = gridManager.allGrids.get(new Position(4, 4));
         goal = gridManager.allGrids.get(new Position(5, 7));
         route = gridManager.AStar(start, goal);
-        vehicleManager.setVehicleRoute(vehicle3, 2, route);
+        if (route != null) {
+            vehicleManager.setVehicleRoute(vehicle3, 2, route);
+        }
 
         Spatial vehicle4 = vehicleManager.newVehicle();
         start = gridManager.allGrids.get(new Position(5, 7));
         goal = gridManager.allGrids.get(new Position(4, 4));
         route = gridManager.AStar(start, goal);
-        vehicleManager.setVehicleRoute(vehicle4, 3, route);
+        if (route != null) {
+            vehicleManager.setVehicleRoute(vehicle4, 3, route);
+        }
 
-        
     }
 
     @Override
