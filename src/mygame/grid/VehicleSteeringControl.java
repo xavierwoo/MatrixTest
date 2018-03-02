@@ -11,6 +11,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 import java.util.ArrayList;
+import mygame.gloabal.GlobalVariables;
 
 /**
  *
@@ -35,7 +36,10 @@ public class VehicleSteeringControl extends AbstractControl implements Savable, 
 
     @Override
     protected void controlUpdate(float tpf) {
-        if (t < 1) {
+//        if (GlobalVariables.gSpeed == 0) {
+//            return;
+//        }
+        if (t < 1 && t >= 0) {
             NaviPath currPath = naviPaths.get(currPathIndex);
             Vector3f pos = currPath.getPosition(t);
             Vector3f dir = currPath.getDirection(t);
@@ -62,7 +66,7 @@ public class VehicleSteeringControl extends AbstractControl implements Savable, 
             spatial.setLocalTranslation(pos);
             spatial.lookAt(spatial.getLocalTranslation().add(dir), Vector3f.UNIT_Y);
 
-            t += velocity * tpf / currPath.length;
+            t += velocity * tpf / currPath.length * GlobalVariables.gSpeed;
 
         } else if (currPathIndex < naviPaths.size() - 1) {
             ++currPathIndex;
