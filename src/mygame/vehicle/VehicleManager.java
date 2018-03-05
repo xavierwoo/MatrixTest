@@ -33,7 +33,7 @@ public class VehicleManager {
     }
     
     public Spatial newVehicle(){
-        Geometry vehicleGeom = new Geometry("Vehicle", new Box(0.2f, 0.13f, 0.35f));
+        Geometry vehicleGeom = new Geometry("Vehicle", new Box(0.2f, 0.13f, 0.55f));
         vehicleGeom.setLocalTranslation(0, 0.13f, 0f);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);

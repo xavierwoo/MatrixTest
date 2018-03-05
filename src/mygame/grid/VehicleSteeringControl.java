@@ -42,10 +42,12 @@ public class VehicleSteeringControl extends AbstractControl implements Savable, 
     @Override
     public void setSpatial(Spatial spatial) {
         super.setSpatial(spatial);
-        Vector3f pos = naviPaths.get(0).getPosition(0);
-        Vector3f dir = naviPaths.get(0).getDirection(0);
-        spatial.setLocalTranslation(pos);
-        spatial.lookAt(spatial.getLocalTranslation().add(dir), Vector3f.UNIT_Y);
+        if (spatial != null) {
+            Vector3f pos = naviPaths.get(0).getPosition(0);
+            Vector3f dir = naviPaths.get(0).getDirection(0);
+            spatial.setLocalTranslation(pos);
+            spatial.lookAt(spatial.getLocalTranslation().add(dir), Vector3f.UNIT_Y);
+        }
     }
 
     @Override

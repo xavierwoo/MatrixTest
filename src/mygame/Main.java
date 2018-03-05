@@ -39,7 +39,7 @@ public class Main extends SimpleApplication {
     public void simpleInitApp() {
 
         gridManager = new GridManager(rootNode);
-        camManager = new CamManager(cam, rootNode);
+        camManager = new CamManager(cam, rootNode, inputManager);
         vehicleManager = new VehicleManager(assetManager, rootNode);
         roadManager = new RoadManager(assetManager, gridManager);
 

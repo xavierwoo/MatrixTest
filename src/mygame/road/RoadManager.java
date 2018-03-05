@@ -31,7 +31,7 @@ import mygame.grid.Position;
  */
 public class RoadManager {
 
-    final private float U_TURN_MAX_VELOCITY = 1f;
+    final private float U_TURN_MAX_VELOCITY = 0.5f;
     final private float TWO_WAY_ONE_LANE_ROAD_MAX_VELOCITY = 2f;
     Node roadsNode = new Node("roads");
     AssetManager assetManager;
