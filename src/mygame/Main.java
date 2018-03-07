@@ -12,6 +12,7 @@ import mygame.grid.GridManager;
 import mygame.grid.NaviPath;
 import mygame.grid.Position;
 import mygame.road.RoadManager;
+import mygame.terrain.TerrainManager;
 import mygame.vehicle.VehicleManager;
 
 /**
@@ -26,6 +27,7 @@ public class Main extends SimpleApplication {
     CamManager camManager;
     RoadManager roadManager;
     GridManager gridManager;
+    TerrainManager terrainManager;
 
     float time = 0;
 
@@ -41,8 +43,11 @@ public class Main extends SimpleApplication {
         gridManager = new GridManager(rootNode);
         camManager = new CamManager(cam, rootNode, inputManager);
         vehicleManager = new VehicleManager(assetManager, rootNode);
-        roadManager = new RoadManager(assetManager, gridManager);
-
+        terrainManager = new TerrainManager(assetManager, rootNode);
+        roadManager = new RoadManager(assetManager, gridManager, terrainManager);
+        flyCam.setEnabled(false);
+        inputManager.setCursorVisible(true);
+        
         roadManager.setTwoWayOneLaneRoad(1, 1, 10, 1);
 
         roadManager.setTwoWayOneLaneRoad(5, 3, 5, 9);

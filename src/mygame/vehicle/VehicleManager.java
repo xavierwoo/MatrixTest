@@ -8,15 +8,12 @@ package mygame.vehicle;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
-import mygame.grid.Grid;
 import mygame.grid.NaviPath;
-import mygame.grid.Position;
 import mygame.grid.VehicleSteeringControl;
 
 /**
@@ -24,8 +21,8 @@ import mygame.grid.VehicleSteeringControl;
  * @author xinyun
  */
 public class VehicleManager {
-    Node vehicles = new Node("vehicles");
-    AssetManager assetManager;
+    final private Node vehicles = new Node("vehicles");
+    final private AssetManager assetManager;
     
     public VehicleManager(AssetManager am, Node rootNode){
         assetManager = am;
@@ -50,38 +47,38 @@ public class VehicleManager {
         vehicle.addControl(vsControl);
     }
     
-    public ArrayList<NaviPath> genTestRout(){
-        ArrayList<NaviPath> naviPaths = new ArrayList<>();
-        Vector3f[] wayPoints = new Vector3f[2];
-        wayPoints[0] = new Vector3f(1f, 0, 5);
-        wayPoints[1] = new Vector3f(1f, 0, 3f);
-        NaviPath naviPath = new NaviPath(new Grid(new Position(1, 5), null), new Grid(new Position(1, 2), null), wayPoints, 3);
-        naviPaths.add(naviPath);
-
-        wayPoints = new Vector3f[2];
-        wayPoints[0] = new Vector3f(1, 0, 3);
-        wayPoints[1] = new Vector3f(1, 0, 2);
-        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
-        naviPaths.add(naviPath);
-        
-        wayPoints = new Vector3f[3];
-        wayPoints[0] = new Vector3f(1f, 0, 2);
-        wayPoints[1] = new Vector3f(1f, 0, 1f);
-        wayPoints[2] = new Vector3f(2f, 0, 1f);
-        naviPath = new NaviPath(new Grid(new Position(1, 2), null), new Grid(new Position(2, 1), null), wayPoints, 1);
-        naviPaths.add(naviPath);
-
-        wayPoints = new Vector3f[2];
-        wayPoints[0] = new Vector3f(2, 0, 1);
-        wayPoints[1] = new Vector3f(4, 0, 1);
-        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
-        naviPaths.add(naviPath);
-        
-        wayPoints = new Vector3f[2];
-        wayPoints[0] = new Vector3f(4, 0, 1);
-        wayPoints[1] = new Vector3f(5, 0, 1);
-        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
-        naviPaths.add(naviPath);
-        return naviPaths;
-    }
+//    public ArrayList<NaviPath> genTestRout(){
+//        final ArrayList<NaviPath> naviPaths = new ArrayList<>();
+//        Vector3f[] wayPoints = new Vector3f[2];
+//        wayPoints[0] = new Vector3f(1f, 0, 5);
+//        wayPoints[1] = new Vector3f(1f, 0, 3f);
+//        NaviPath naviPath = new NaviPath(new Grid(new Position(1, 5), null), new Grid(new Position(1, 2), null), wayPoints, 3);
+//        naviPaths.add(naviPath);
+//
+//        wayPoints = new Vector3f[2];
+//        wayPoints[0] = new Vector3f(1, 0, 3);
+//        wayPoints[1] = new Vector3f(1, 0, 2);
+//        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
+//        naviPaths.add(naviPath);
+//        
+//        wayPoints = new Vector3f[3];
+//        wayPoints[0] = new Vector3f(1f, 0, 2);
+//        wayPoints[1] = new Vector3f(1f, 0, 1f);
+//        wayPoints[2] = new Vector3f(2f, 0, 1f);
+//        naviPath = new NaviPath(new Grid(new Position(1, 2), null), new Grid(new Position(2, 1), null), wayPoints, 1);
+//        naviPaths.add(naviPath);
+//
+//        wayPoints = new Vector3f[2];
+//        wayPoints[0] = new Vector3f(2, 0, 1);
+//        wayPoints[1] = new Vector3f(4, 0, 1);
+//        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
+//        naviPaths.add(naviPath);
+//        
+//        wayPoints = new Vector3f[2];
+//        wayPoints[0] = new Vector3f(4, 0, 1);
+//        wayPoints[1] = new Vector3f(5, 0, 1);
+//        naviPath = new NaviPath(new Grid(new Position(2, 1), null), new Grid(new Position(5, 1), null), wayPoints, 3);
+//        naviPaths.add(naviPath);
+//        return naviPaths;
+//    }
 }

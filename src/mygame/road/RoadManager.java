@@ -24,6 +24,7 @@ import mygame.grid.GridContainer;
 import mygame.grid.GridManager;
 import mygame.grid.NaviPath;
 import mygame.grid.Position;
+import mygame.terrain.TerrainManager;
 
 /**
  *
@@ -33,29 +34,30 @@ public class RoadManager {
 
     final private float U_TURN_MAX_VELOCITY = 0.5f;
     final private float TWO_WAY_ONE_LANE_ROAD_MAX_VELOCITY = 2f;
-    Node roadsNode = new Node("roads");
-    AssetManager assetManager;
-    GridManager gridManager;
-
+    final private Node roadsNode = new Node("roads");
+    final private AssetManager assetManager;
+    final private GridManager gridManager;
+    final private TerrainManager terrainManager;
+    
     private Mesh twoLaneRoadMesh;
     private Mesh twoLaneCrossMesh;
 
-    public RoadManager(final AssetManager am, final GridManager gm) {
+    public RoadManager(final AssetManager am, final GridManager gm, final TerrainManager tm) {
         assetManager = am;
         gridManager = gm;
+        terrainManager = tm;
         genTwoLaneRoadMesh();
         genTwoLaneCrossMesh();
         gm.rootNode.attachChild(roadsNode);
-        //setGridPoint();
     }
 
     private void genTwoLaneRoadMesh() {
         twoLaneRoadMesh = new Mesh();
         Vector3f[] vertices = new Vector3f[4];
-        vertices[0] = new Vector3f(-0.5f, 0, -0.5f);
-        vertices[1] = new Vector3f(-0.5f, 0, 1.5f);
-        vertices[2] = new Vector3f(0.5f, 0, 1.5f);
-        vertices[3] = new Vector3f(0.5f, 0, -0.5f);
+        vertices[0] = new Vector3f(-0.5f, 0.01f, -0.5f);
+        vertices[1] = new Vector3f(-0.5f, 0.01f, 1.5f);
+        vertices[2] = new Vector3f(0.5f, 0.01f, 1.5f);
+        vertices[3] = new Vector3f(0.5f, 0.01f, -0.5f);
 
         Vector2f[] texCoord = new Vector2f[4];
         texCoord[0] = new Vector2f(0, 0);
@@ -72,10 +74,10 @@ public class RoadManager {
     private void genTwoLaneCrossMesh() {
         twoLaneCrossMesh = new Mesh();
         Vector3f[] vertices = new Vector3f[4];
-        vertices[0] = new Vector3f(-0.5f, 0, -0.5f);
-        vertices[1] = new Vector3f(-0.5f, 0, 1.5f);
-        vertices[2] = new Vector3f(1.5f, 0, 1.5f);
-        vertices[3] = new Vector3f(1.5f, 0, -0.5f);
+        vertices[0] = new Vector3f(-0.5f, 0.01f, -0.5f);
+        vertices[1] = new Vector3f(-0.5f, 0.01f, 1.5f);
+        vertices[2] = new Vector3f(1.5f, 0.01f, 1.5f);
+        vertices[3] = new Vector3f(1.5f, 0.01f, -0.5f);
 
         Vector2f[] texCoord = new Vector2f[4];
         texCoord[0] = new Vector2f(0, 0);
@@ -104,7 +106,7 @@ public class RoadManager {
         mat.setColor("Color", ColorRGBA.Gray);
         road.setMaterial(mat);
 
-        road.setLocalTranslation(x, 0, z);
+        road.setLocalTranslation(x, terrainManager.getHeight(x, z), z);
 
         Grid grid0 = new Grid(new Position(x, z), road);
         Grid grid1;
@@ -133,7 +135,7 @@ public class RoadManager {
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Green);
         cross.setMaterial(mat);
-        cross.setLocalTranslation(x, 0, z);
+        cross.setLocalTranslation(x, terrainManager.getHeight(x, z), z);
         
         Grid grid0 = new Grid(new Position(x, z), cross);
         Grid grid1 = new Grid(new Position(x+1, z), cross);

@@ -23,8 +23,8 @@ public class Grid implements Savable{
     
     public final Spatial spatial;
     
-    public HashMap<Grid, NaviPath> edges = new HashMap<>();
-    public HashSet<Grid> toThis = new HashSet<>();
+    public final HashMap<Grid, NaviPath> edges = new HashMap<>();
+    public final HashSet<Grid> toThis = new HashSet<>();
     
     public Grid(Position position, Spatial spatial){
         this.position = position;

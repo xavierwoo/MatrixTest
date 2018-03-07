@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author Xavier
  */
 public class GridContainer implements Savable{
-    public Grid[] grids;
+    public final Grid[] grids;
 
     public GridContainer(int size){
         grids = new Grid[size];

@@ -20,9 +20,9 @@ import com.jme3.scene.control.CameraControl.ControlDirection;
  * @author xinyun
  */
 public class CamManager {
-    CameraNode cameraNode;
-    InputManager inputManager;
-    Node cameraFocusNode = new Node("cameraFocusNode");
+    final private CameraNode cameraNode;
+    final private InputManager inputManager;
+    final private Node cameraFocusNode = new Node("cameraFocusNode");
     
     public CamManager(Camera cam, Node rootNode, InputManager inputManager){
         this.inputManager = inputManager;
